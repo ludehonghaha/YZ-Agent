@@ -50,8 +50,9 @@ func TestAdvancedRoutingDirectAsDefault(t *testing.T) {
 		Mode: "advanced", Enabled: true, DefaultTarget: "direct",
 	}}
 	rules := buildSmartRelayRoutingRules(node, nil)
-	if len(rules) != 1 || rules[0]["outbound"] != "direct" {
-		t.Fatalf("bad default: %#v", rules)
+	// Direct default is handled by the existing post-resolve guard/final route.
+	if len(rules) != 0 {
+		t.Fatalf("direct fallback must preserve the private-IP guard: %#v", rules)
 	}
 	node.SmartRelay.Enabled = false
 	if len(buildSmartRelayRoutingRules(node, nil)) != 0 {
