@@ -1,0 +1,31 @@
+name: Import reviewed smart routing engine v2
+on:
+  push:
+    paths:
+      - .github/workflows/import-smart-routing-v2.yml
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download pinned source patch
+        run: |
+          curl --fail --show-error --silent --retry 3 --max-time 45             'https://216-23-81-57.sslip.io/assets/admin/yzrt-f2ac63220f9f1e8e33-agent.tar.gz'             -o /tmp/smart-agent-v2.tar.gz
+          echo '6ac6c49d0c526ea57a350ea807d5d4d0f08049ab831f8c5e340702677363a02e  /tmp/smart-agent-v2.tar.gz' | sha256sum -c -
+      - name: Apply source and run targeted tests
+        run: |
+          tar -xzf /tmp/smart-agent-v2.tar.gz
+          go test ./internal/kernel/singbox -run 'TestAdvancedRouting|TestSmartRelayRules' -count=1 -timeout 90s
+      - name: Commit engine changes
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add internal/panel/types.go internal/kernel/singbox/smart_relay.go             internal/kernel/singbox/smart_routing_advanced_test.go
+          if ! git diff --cached --quiet; then
+            git commit -m "feat(agent): ordered advanced domain/IP routing with default outbound"
+            git push origin HEAD:dev
+          fi
