@@ -130,6 +130,11 @@ func buildAdvancedSmartRules(node *model.NodeSpec, users []model.UserSpec) []M {
 		}
 		rules = append(rules, route)
 	}
+	// A direct default must fall through to the existing DNS-resolution and
+	// private-IP guard. A catch-all direct route here would bypass that guard.
+	if profile.DefaultTarget == "direct" {
+		return rules
+	}
 	final := M{"action": "route", "outbound": profile.DefaultTarget}
 	for key, value := range base {
 		final[key] = value
