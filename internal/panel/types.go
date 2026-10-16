@@ -173,10 +173,20 @@ type NodeConfig struct {
 // SmartRelayConfig routes the entry node's single client identity to two
 // already-configured relay children. Other logical identities stay unchanged.
 type SmartRelayConfig struct {
-	Enabled       bool     `json:"enabled"`
-	AINodeID      int      `json:"ai_node_id"`
-	DefaultNodeID int      `json:"default_node_id"`
-	Domains       []string `json:"domains"`
+	Mode          string           `json:"mode,omitempty"`
+	Enabled       bool             `json:"enabled"`
+	AINodeID      int              `json:"ai_node_id"`
+	DefaultNodeID int              `json:"default_node_id"`
+	Domains       []string         `json:"domains"`
+	DefaultTarget string           `json:"default_target,omitempty"`
+	Rules         []SmartRouteRule `json:"rules,omitempty"`
+}
+
+type SmartRouteRule struct {
+	Name   string   `json:"name"`
+	Kind   string   `json:"kind"`
+	Values []string `json:"values"`
+	Target string   `json:"target"`
 }
 
 // Relay modes.
