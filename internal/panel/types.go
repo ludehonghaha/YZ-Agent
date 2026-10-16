@@ -163,10 +163,20 @@ type NodeConfig struct {
 	AcceptProxyProtocol bool `json:"accept_proxy_protocol,omitempty"`
 
 	// Relay describes the transit topology (Xboard extension). Nil for plain nodes.
-	Relay *RelayConfig `json:"relay,omitempty"`
+	Relay      *RelayConfig      `json:"relay,omitempty"`
+	SmartRelay *SmartRelayConfig `json:"smart_relay,omitempty"`
 
 	// DeviceIPExclude 是不计入设备数的来源 IP 或网段，对所有节点相同；缺失表示空名单。
 	DeviceIPExclude []string `json:"device_ip_exclude,omitempty"`
+}
+
+// SmartRelayConfig routes the entry node's single client identity to two
+// already-configured relay children. Other logical identities stay unchanged.
+type SmartRelayConfig struct {
+	Enabled       bool     `json:"enabled"`
+	AINodeID      int      `json:"ai_node_id"`
+	DefaultNodeID int      `json:"default_node_id"`
+	Domains       []string `json:"domains"`
 }
 
 // Relay modes.

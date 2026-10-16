@@ -100,6 +100,7 @@ func buildConfig(kcfg config.KernelConfig, nc *model.NodeSpec, users []model.Use
 
 	// Merge panel routes and static config routes
 	relayRules, relayEntryRules := buildRelayRoutingRules(nc)
+	relayRules = append(buildSmartRelayRoutingRules(nc), relayRules...)
 	cfg["routing"] = buildRouting(nc.Routes, nc.CustomRouteRules, mergeRouteList(nc.CustomRoutes, kcfg.CustomRoute), relayRules, guardRules, relayEntryRules...)
 
 	mergeCustomXray(cfg, kcfg)
